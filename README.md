@@ -5,3 +5,12 @@
 ## 2. Model Training
 
 ## 3. Model Evaluation
+
+## Citations:
+```
+PiSA-SR
+
+LSSR data
+
+LSSR model
+```
