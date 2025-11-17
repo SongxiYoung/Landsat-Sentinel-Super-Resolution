@@ -101,7 +101,7 @@ class CrossAttnBlock2D(nn.Module):
                 nn.Linear(dim, dim), nn.GELU(),
                 nn.Linear(dim, dim), nn.Sigmoid()
             )
-            self.gamma = nn.Parameter(torch.tensor(0.1))  # 全局尺度，稳色彩
+            self.gamma = nn.Parameter(torch.tensor(0.1)) 
 
     @staticmethod
     def _flatten_2d(x_2d: torch.Tensor) -> torch.Tensor:
@@ -176,9 +176,9 @@ class CrossAttnFusion(nn.Module):
 class SARGuidedOpticalHead(nn.Module):
     """
     Optical(3ch) ← SAR(2ch)：
-      - 3x3 Conv 把 3/2 通道投影到同一维度 dim
-      - Cross-Attn (Opt<-SAR) × L 层（可窗口化 + 残差门控）
-      - 1x1 out 投影回 3 通道，残差细化
+      - 3x3 Conv 
+      - Cross-Attn (Opt<-SAR) 
+      - 1x1 out 
     """
     def __init__(self, opt_in_ch=3, sar_in_ch=2, dim=96, heads=6, layers=2,
                  mlp_ratio=4.0, window_size=12, gating=True, out_act=None):
@@ -197,8 +197,8 @@ class SARGuidedOpticalHead(nn.Module):
                                       mlp_ratio=mlp_ratio, window_size=window_size,
                                       gating=gating, drop=0.0)
         self.out_proj = nn.Conv2d(dim, opt_in_ch, kernel_size=1)
-        self.gamma = nn.Parameter(torch.tensor(0.1))  # 全局残差尺度
-        self.out_act = out_act  # 可选 nn.Tanh() / nn.Identity()
+        self.gamma = nn.Parameter(torch.tensor(0.1)) 
+        self.out_act = out_act 
 
     def forward(self, opt_rgb: torch.Tensor, sar_2ch: torch.Tensor) -> torch.Tensor:
         B, _, H, W = opt_rgb.shape
@@ -208,7 +208,7 @@ class SARGuidedOpticalHead(nn.Module):
         f_sar = self.sar_in(sar_2ch)
         f_fused = self.fusion(f_opt, f_sar)          # [B,dim,H,W]
         delta = self.out_proj(f_fused)               # [B,3,H,W]
-        out = opt_rgb + self.gamma * delta           # 残差细化
+        out = opt_rgb + self.gamma * delta           
         if self.out_act is not None:
             out = self.out_act(out)
         return out
@@ -219,7 +219,7 @@ if __name__ == "__main__":
     opt = torch.randn(B, 3, H, W)
     sar = torch.randn(B, 2, H, W)
 
-    # 典型配置：C=96, heads=6, layers=2, ws=12（与参数量区间匹配）
+    # model test
     model = SARGuidedOpticalHead(opt_in_ch=3, sar_in_ch=2, dim=96, heads=6, layers=2,
                                  mlp_ratio=4.0, window_size=12, gating=True, out_act=None)
     y = model(opt, sar)
