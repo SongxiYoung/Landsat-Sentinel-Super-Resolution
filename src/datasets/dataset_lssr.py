@@ -478,6 +478,6 @@ if __name__ == "__main__":
         # Image.fromarray(dem_img).save(os.path.join(output_dir, f"{base_name}_DEM.png"))
 
         # Landcover visualization
-        save_landcover_image(example["landcover_values"], os.path.join(output_dir, f"{base_name}_LC.png"))
+        # save_landcover_image(example["landcover_values"], os.path.join(output_dir, f"{base_name}_LC.png"))
 
     print(f"Saved debug images to {output_dir}/")
