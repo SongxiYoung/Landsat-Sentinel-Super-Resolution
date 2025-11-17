@@ -1,0 +1,36 @@
+
+CUDA_VISIBLE_DEVICES="0," accelerate launch train_lssr.py \
+    --pretrained_model_path="stable-diffusion-2-1-base" \
+    --pretrained_model_path_csd="stable-diffusion-2-1-base" \
+    --dataset_txt_paths="preset/gt_path_tif_v2.txt" \
+    --highquality_dataset_txt_paths="preset/gt_selected_path_tif_v2.txt" \
+    --dem_dataset_txt_paths="preset/dem_tif_v2.txt" \
+    --landcover_dataset_txt_paths="preset/landcover_tif_v2.txt" \
+    --s1_dataset_txt_paths="preset/s1_tif_v2.txt" \
+    --dataset_test_folder="preset/test_datasets" \
+    --resolution_ori 192 \
+    --resolution_tgt 192 \
+    --learning_rate=5e-5 \
+    --train_batch_size=1 \
+    --prob=0.0 \
+    --gradient_accumulation_steps=1 \
+    --enable_xformers_memory_efficient_attention --checkpointing_steps 500 \
+    --seed 123 \
+    --output_dir="experiments/deploy" \
+    --cfg_csd 10.0 \
+    --timesteps1 3 \
+    --lambda_lpips=1.0 \
+    --lambda_l2=2.0 \
+    --lambda_csd=2.0 \
+    --lambda_fft=1.0 \
+    --lambda_ndvi=20.0 \
+    --pix_steps=0 \
+    --lora_rank_unet_pix=4 \
+    --lora_rank_unet_sem=4 \
+    --min_dm_step_ratio=0.02 \
+    --max_dm_step_ratio=0.5 \
+    --null_text_ratio=0.5 \
+    --align_method="adain" \
+    --deg_file_path="params.yml" \
+    --tracker_project_name "LSSR" \
+    --is_module False 
