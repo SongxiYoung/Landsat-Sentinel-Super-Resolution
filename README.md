@@ -31,9 +31,26 @@ bash ./scripts/test/test_lssr.sh
 
 ## Citations:
 ```
-PiSA-SR
+PiSA-SR:
+@inproceedings{sun2025pixel,
+  title={Pixel-level and semantic-level adjustable super-resolution: A dual-lora approach},
+  author={Sun, Lingchen and Wu, Rongyuan and Ma, Zhiyuan and Liu, Shuaizheng and Yi, Qiaosi and Zhang, Lei},
+  booktitle={Proceedings of the Computer Vision and Pattern Recognition Conference},
+  pages={2333--2343},
+  year={2025}
+}
 
-LSSR data
+LSSR dataset:
+@misc{yang2025lssr,
+  author       = {Yang, Songxi and Sui, Tang and Huang, Qunying},
+  title        = {LSSR Landsat Sentinel Super Resolution},
+  year         = {2025},
+  publisher    = {figshare},
+  doi          = {10.6084/m9.figshare.30062527.v1},
+  url          = {https://doi.org/10.6084/m9.figshare.30062527.v1},
+  note         = {Data set}
+}
 
-LSSR model
+LSSR model:
+TBD.
 ```
