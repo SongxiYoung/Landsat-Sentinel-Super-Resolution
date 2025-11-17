@@ -1,9 +1,9 @@
 # Landsat-Sentinel-Super-Resolution
 
-## 1. Environment Setup
+## 1. Conda Environment Setup
 Option1:
 ```
-conda
+conda env create -f environment.yml
 ```
 
 Option2:
