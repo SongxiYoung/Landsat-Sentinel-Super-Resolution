@@ -156,7 +156,7 @@ def main(args):
 
                 # get text prompts from GT
                 # x_tgt_ram = ram_transforms(x_tgt*0.5+0.5)
-                x_tgt_rgb = x_tgt[:, [2,1,0], :, :]  # ----------------- 选B2, B3, B4
+                x_tgt_rgb = x_tgt[:, [2,1,0], :, :]  # B2, B3, B4
                 x_tgt_ram = ram_transforms(x_tgt_rgb*0.5+0.5)
 
                 caption = inference(x_tgt_ram.to(dtype=torch.float16), RAM)
@@ -173,8 +173,8 @@ def main(args):
                     lambda_fft = args.lambda_fft
                     lambda_ndvi = args.lambda_ndvi
                     
-                x_tgt = x_tgt[:, [2,1,0], :, :] # ----------------- 选B2, B3, B4
-                x_src = x_src[:, [2,1,0], :, :] # ----------------- 选B2, B3, B4
+                x_tgt = x_tgt[:, [2,1,0], :, :] # B2, B3, B4
+                x_src = x_src[:, [2,1,0], :, :] # B2, B3, B4
                 # print("x_tgt.shape", x_tgt.shape)
                 # print("x_src.shape", x_src.shape)
                 x_tgt_pred, latents_pred, x_ir_pred, x_ir_gt, prompt_embeds, neg_prompt_embeds = net_lssr(x_src, x_tgt, batch=batch, args=args)
@@ -237,8 +237,8 @@ def main(args):
                             x_src = batch_val["conditioning_pixel_values"].cuda()
                             x_tgt = batch_val["output_pixel_values"].cuda()
 
-                            x_tgt = x_tgt[:, [2,1,0], :, :] # ----------------- B2, B3, B4
-                            x_src = x_src[:, [2,1,0], :, :] # ----------------- B2, B3, B4
+                            x_tgt = x_tgt[:, [2,1,0], :, :] # B2, B3, B4
+                            x_src = x_src[:, [2,1,0], :, :] # B2, B3, B4
                             # print("x_tgt_pred.shape", x_tgt_pred.shape)
 
                             x_basename = batch_val["base_name"][0]
@@ -254,47 +254,9 @@ def main(args):
                                                                                                       batch=batch_val,
                                                                                                       args=args)
 
-                                # -------------------------------------------------------------------
-                                '''
-                                # output_pil = transforms.ToPILImage()(x_tgt_pred[0].cpu() * 0.5 + 0.5)
-                                x_tgt_pred_rgb = x_tgt_pred[0, :, :, :]  # select Blue, Green, Red
-                                x_tgt_pred_rgb = x_tgt_pred_rgb.cpu() * 0.5 + 0.5
-                                output_pil = transforms.ToPILImage()(x_tgt_pred_rgb.clamp(0,1))
-
-                                x_src_rgb = x_src[0, :, :, :]
-                                x_src_rgb = x_src_rgb.cpu() * 0.5 + 0.5
-                                input_image = transforms.ToPILImage()(x_src_rgb.clamp(0,1))
-
-                                if args.align_method == 'adain':
-                                    output_pil = adain_color_fix(target=output_pil, source=input_image)
-                                elif args.align_method == 'wavelet':
-                                    output_pil = wavelet_color_fix(target=output_pil, source=input_image)
-                                else:
-                                    pass
-
-                                x_basename = os.path.splitext(x_basename)[0] 
-                                outf = os.path.join(args.output_dir, "eval", f"fid_{global_step}", f"{x_basename}.png")
-                                output_pil.save(outf)
-                                '''
-
                                 x_basename = os.path.splitext(x_basename)[0]
                                 outf_rgb = os.path.join(args.output_dir, "eval", f"fid_{global_step}", f"{x_basename}.png")
                                 save_rgb_composite(x_tgt_pred[0].detach().cpu(), outf_rgb, apply_brightness_enhance=True)
-
-
-                                # -------------------------------------------------------------------
-                                '''
-                                # IR
-                                x_ir_pred_img = x_ir_pred[0, :, :, :].cpu() * 0.5 + 0.5  # unnormalize
-                                x_ir_pred_img = x_ir_pred_img.clamp(0, 1)
-
-                                #
-                                ir_pseudo_rgb = transforms.ToPILImage()(x_ir_pred_img)
-
-                                #
-                                outf_ir = os.path.join(args.output_dir, "eval", f"fid_{global_step}", f"{x_basename}_ir.png")
-                                ir_pseudo_rgb.save(outf_ir)
-                                '''
 
                                 outf_ir = os.path.join(args.output_dir, "eval", f"fid_{global_step}", f"{x_basename}_ir.png")
                                 save_nir_swir_composite(x_ir_pred[0].detach().cpu(), outf_ir, apply_brightness_enhance=True)
