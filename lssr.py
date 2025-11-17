@@ -254,7 +254,7 @@ class LSSR(torch.nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 48→24
             nn.ReLU(),
-            nn.Conv2d(64, 4, kernel_size=3, padding=1)  # 输出通道和 latent 匹配（4）
+            nn.Conv2d(64, 4, kernel_size=3, padding=1)  
         )
 
         self.lc_encoder = nn.Sequential(
@@ -264,10 +264,10 @@ class LSSR(torch.nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 48→24
             nn.ReLU(),
-            nn.Conv2d(64, 4, kernel_size=3, padding=1)  # 输出通道和 latent 匹配（4）
+            nn.Conv2d(64, 4, kernel_size=3, padding=1)  
         )
 
-        self.month_encoder = nn.Embedding(5, 4)  # 5个月，每月映射到4 channels
+        self.month_encoder = nn.Embedding(5, 4)  # 5 months
 
         # cross attention
         self.latent_project_in = nn.Conv2d(4, 256, kernel_size=1)
@@ -378,10 +378,10 @@ class LSSR(torch.nn.Module):
         month_feat = month_feat.view(bs, 4, 1, 1)                # (B, 4, 1, 1)
         # print("🟡 [Input] time feature shape:", month_feat.shape)
 
-        # 1. 构建 knowledge_feat
+        # 1. knowledge_feat
         knowledge_feat = dem_feat + lc_feat + month_feat  # [B, 4, 24, 24]
 
-        # 2. 将 latent + knowledge 投入 cross-attention
+        # 2. latent + knowledge by cross-attention
         rgb_proj = self.latent_project_in(encoded_control)        # [B, 256, 24, 24]
         ir_proj = self.latent_project_in(encoded_control_ir)        # [B, 256, 24, 24]
         knowledge_proj = self.latent_project_in(knowledge_feat) # [B, 256, 24, 24]
@@ -403,14 +403,14 @@ class LSSR(torch.nn.Module):
             value=knowledge_flat
         )  # [B, 576, 256]
 
-        # 4. 反变换成 [B, 4, 24, 24]
+        # 4. [B, 4, 24, 24]
         rgb_attn_output = rgb_attn_output.transpose(1, 2).view(bs, 256, 24, 24)
         rgb_attn_output = self.latent_project_out(rgb_attn_output)  # [B, 4, 24, 24]
 
         ir_attn_output = ir_attn_output.transpose(1, 2).view(bs, 256, 24, 24)
         ir_attn_output = self.latent_project_out(ir_attn_output)  # [B, 4, 24, 24]
 
-        # 5. 注入 latent（残差连接）
+        # 5. inject to latent (residual)
         encoded_control = encoded_control + self.gamma_rgb * rgb_attn_output
         encoded_control_ir = encoded_control_ir + self.gamma_ir * ir_attn_output
 
@@ -463,7 +463,6 @@ class LSSR(torch.nn.Module):
         sd["lora_rank_unet_sem"] = self.lora_rank_unet_sem
         sd["state_dict_unet"] = {k: v for k, v in self.unet.state_dict().items() if "lora" in k}
 
-        # ✅ 保存 aux encoder 权重
         # print("saving aux encoders...")
         sd["dem_encoder"] = self.dem_encoder.state_dict()
         sd["lc_encoder"]  = self.lc_encoder.state_dict()
@@ -500,7 +499,7 @@ class LSSR_eval(nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 48→24
             nn.ReLU(),
-            nn.Conv2d(64, 4, kernel_size=3, padding=1)  # 输出通道和 latent 匹配（4）
+            nn.Conv2d(64, 4, kernel_size=3, padding=1) 
         ).to(device=self.device, dtype=self.weight_dtype)
 
         self.lc_encoder = nn.Sequential(
@@ -510,10 +509,10 @@ class LSSR_eval(nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 48→24
             nn.ReLU(),
-            nn.Conv2d(64, 4, kernel_size=3, padding=1)  # 输出通道和 latent 匹配（4）
+            nn.Conv2d(64, 4, kernel_size=3, padding=1) 
         ).to(device=self.device, dtype=self.weight_dtype)
 
-        self.month_encoder = nn.Embedding(5, 4).to(device=self.device)  # 5个月，每月映射到4 channels
+        self.month_encoder = nn.Embedding(5, 4).to(device=self.device) 
 
         # cross attention
         self.latent_project_in = nn.Conv2d(4, 256, kernel_size=1).to(device=self.device, dtype=self.weight_dtype)
@@ -759,10 +758,10 @@ class LSSR_eval(nn.Module):
         month_feat = month_feat.view(bs, 4, 1, 1)                # (B, 4, 1, 1)
         # print("🟡 [Input] time feature shape:", month_feat.shape)
 
-        # 1. 构建 knowledge_feat
+        # 1. knowledge_feat
         knowledge_feat = dem_feat + lc_feat + month_feat  # [B, 4, 24, 24]
 
-        # 2. 将 latent + knowledge 投入 cross-attention
+        # 2. latent + knowledge -> cross-attention
         rgb_proj = self.latent_project_in(encoded_control)        # [B, 256, 24, 24]
         ir_proj = self.latent_project_in(encoded_control_ir)        # [B, 256, 24, 24]
         knowledge_proj = self.latent_project_in(knowledge_feat) # [B, 256, 24, 24]
@@ -784,14 +783,14 @@ class LSSR_eval(nn.Module):
             value=knowledge_flat
         )  # [B, 576, 256]
 
-        # 4. 反变换成 [B, 4, 24, 24]
+        # 4. [B, 4, 24, 24]
         rgb_attn_output = rgb_attn_output.transpose(1, 2).view(bs, 256, 24, 24)
         rgb_attn_output = self.latent_project_out(rgb_attn_output)  # [B, 4, 24, 24]
 
         ir_attn_output = ir_attn_output.transpose(1, 2).view(bs, 256, 24, 24)
         ir_attn_output = self.latent_project_out(ir_attn_output)  # [B, 4, 24, 24]
 
-        # 5. 注入 latent（残差连接）
+        # 5. inject to latent (residual)
         encoded_control = encoded_control + self.gamma_rgb * rgb_attn_output
         encoded_control_ir = encoded_control_ir + self.gamma_ir * ir_attn_output
         
