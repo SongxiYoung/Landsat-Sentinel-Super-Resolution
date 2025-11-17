@@ -1,6 +1,6 @@
 # Landsat-Sentinel-Super-Resolution
 
-## 1. Conda Setup
+## 1. Environment Setup
 
 ## 2. Model Training
 
