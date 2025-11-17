@@ -7,7 +7,7 @@ conda env create -f environment.yml
 ```
 
 Option2:
-Follow the [PiSA-SR installation steps] (https://github.com/csslc/PiSA-SR/tree/main).
+Follow the [PiSA-SR installation steps](https://github.com/csslc/PiSA-SR/tree/main).
 
 ## 2. Download Pretrained Models
 
