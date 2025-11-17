@@ -12,7 +12,7 @@ Follow the [PiSA-SR installation steps](https://github.com/csslc/PiSA-SR/tree/ma
 ## 2. Download Pretrained Models
 
 - Download the pretrained SD-2.1-base models from [HuggingFace](https://huggingface.co/stabilityai/stable-diffusion-2-1-base).
-- Download the RAM model from [HuggingFace]([https://huggingface.co](https://huggingface.co/spaces/xinyu1205/recognize-anything/blob/main/ram_swin_large_14m.pth) and save the model to "./src/ram_pretrain_model/".
+- Download the RAM model from [HuggingFace](https://huggingface.co/spaces/xinyu1205/recognize-anything/blob/main/ram_swin_large_14m.pth) and save the model to "./src/ram_pretrain_model/".
 
 
 ## 3. Model Training
