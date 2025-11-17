@@ -124,13 +124,13 @@ def pisa_sr(args):
 
     time_records, psnr_list, ssim_list, lpips_list, fcl_list = [], [], [], [], []
     psnr_ir_list, ssim_ir_list, lpips_ir_list, fcl_ir_list = [], [], [], []
-    ndvi_mse_list = []  # 统计所有样本的 NDVI MSE
+    ndvi_mse_list = []  
     sam_rgb_list, sam_ir_list, sam_full_list = [], [], []
 
 
     for batch in tqdm(dataloader):
-        x_src = batch["conditioning_pixel_values"][:, [2, 1, 0], :, :].cuda()  # ----------------- 选B2, B3, B4
-        x_tgt = batch["output_pixel_values"][:, [2, 1, 0], :, :].cuda()        # ----------------- 选B2, B3, B4
+        x_src = batch["conditioning_pixel_values"][:, [2, 1, 0], :, :].cuda()  # B2, B3, B4
+        x_tgt = batch["output_pixel_values"][:, [2, 1, 0], :, :].cuda()        # B2, B3, B4
         bname = batch["base_name"][0]
         validation_prompt = ""
 
@@ -219,18 +219,18 @@ def pisa_sr(args):
         print(f"{bname} | [IR] PSNR={psnr_ir:.2f}, SSIM={ssim_ir:.4f}, LPIPS={lpips_ir:.4f}, FCL={fcl_ir:.6f}")
 
         # === NDVI Evaluation ===
-        # 合并 RGB (x_pred) 和 IR (x_pred_ir) 预测波段
+        # concat RGB (x_pred) IR (x_pred_ir) 
         x_pred_full = torch.cat([x_pred[0], x_pred_ir[0]], dim=0)  # (6, H, W)
 
-        # 计算 Ground Truth 和 Prediction 的 NDVI
+        # compute NDVI
         ndvi_gt = compute_ndvi(batch["output_pixel_values"][0].cpu())
         ndvi_pred = compute_ndvi(x_pred_full.cpu())
 
-        # 计算 NDVI MSE
+        # compute NDVI MSE
         ndvi_mse = torch.mean((ndvi_gt - ndvi_pred) ** 2).item()
         ndvi_mse_list.append(ndvi_mse)
 
-        # 保存 NDVI map
+        # save NDVI map (optional)
         ndvi_save_path = os.path.join(args.output_dir, os.path.splitext(bname)[0] + "_ndvi.png")
         save_ndvi_map(x_pred_full, ndvi_save_path)
 
