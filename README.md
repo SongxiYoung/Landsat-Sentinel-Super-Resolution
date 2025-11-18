@@ -31,7 +31,7 @@ bash ./scripts/test/test_lssr.sh
 
 ## Citations:
 ```
-PiSA-SR:
+PiSA-SR model:
 @inproceedings{sun2025pixel,
   title={Pixel-level and semantic-level adjustable super-resolution: A dual-lora approach},
   author={Sun, Lingchen and Wu, Rongyuan and Ma, Zhiyuan and Liu, Shuaizheng and Yi, Qiaosi and Zhang, Lei},
